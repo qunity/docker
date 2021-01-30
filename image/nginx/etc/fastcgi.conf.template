@@ -9,7 +9,4 @@
 # |                                                                            |
 # +----------------------------------------------------------------------------+
 
-.env
-
-socket/*
-!socket/.gitkeep
+fastcgi_param   PROJECT_MODE   ${PROJECT_MODE};
