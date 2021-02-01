@@ -49,6 +49,7 @@ services:
       context: ./image/php
       args:
         - PROJECT_USER=${PROJECT_USER}
+    user: ${PROJECT_USER}
     networks:
       - default
     env_file:
