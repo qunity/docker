@@ -9,7 +9,11 @@
 # |                                                                            |
 # +----------------------------------------------------------------------------+
 
+.idea
 .env
 
-socket/*
-!socket/.gitkeep
+project/*
+!project/.gitkeep
+
+docker/socket/*
+!docker/socket/.gitkeep

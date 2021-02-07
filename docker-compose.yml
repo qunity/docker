@@ -18,10 +18,10 @@ services:
   # +--------------------------------------------------------------------------+
   nginx:
     restart: unless-stopped
-    image: ${COMPOSE_PROJECT_NAME}.nginx
-    container_name: ${COMPOSE_PROJECT_NAME}.nginx
+    image: ${COMPOSE_PROJECT_NAME}-nginx
+    container_name: ${COMPOSE_PROJECT_NAME}-nginx
     build:
-      context: ./image/nginx
+      context: ./docker/image/nginx
       args:
         - PROJECT_USER=${PROJECT_USER}
     networks:
@@ -34,19 +34,19 @@ services:
       - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
     working_dir: /usr/share/nginx/html
     volumes:
-      - ./../project:/usr/share/nginx/html
-      - ./socket:/var/socket
-      - ./image/nginx/etc:/etc/nginx/templates:ro
+      - ./project:/usr/share/nginx/html
+      - ./docker/socket:/var/socket
+      - ./docker/image/nginx/etc:/etc/nginx/templates:ro
 
   # +--------------------------------------------------------------------------+
   # | PHP                                                                      |
   # +--------------------------------------------------------------------------+
   php:
     restart: unless-stopped
-    image: ${COMPOSE_PROJECT_NAME}.php
-    container_name: ${COMPOSE_PROJECT_NAME}.php
+    image: ${COMPOSE_PROJECT_NAME}-php
+    container_name: ${COMPOSE_PROJECT_NAME}-php
     build:
-      context: ./image/php
+      context: ./docker/image/php
       args:
         - PROJECT_USER=${PROJECT_USER}
     user: ${PROJECT_USER}
@@ -56,13 +56,13 @@ services:
       - ./.env
     working_dir: /usr/share/nginx/html
     volumes:
-      - ./../project:/usr/share/nginx/html
-      - ./socket:/var/socket
-      - ./image/php/etc/php.conf:/usr/local/etc/php/conf.d/php.ini:ro
-      - ./image/php/etc/opcache.conf:/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini:ro
-      - ./image/php/etc/php-fpm.conf:/usr/local/etc/php-fpm.d/${PROJECT_HOST}.conf:ro
-      - ./image/php/etc/xdebug.conf:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:ro
+      - ./project:/usr/share/nginx/html
+      - ./docker/socket:/var/socket
+      - ./docker/image/php/etc/php.conf:/usr/local/etc/php/conf.d/php.ini:ro
+      - ./docker/image/php/etc/opcache.conf:/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini:ro
+      - ./docker/image/php/etc/php-fpm.conf:/usr/local/etc/php-fpm.d/${PROJECT_HOST}.conf:ro
+      - ./docker/image/php/etc/xdebug.conf:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:ro
 
 networks:
   default:
-    name: ${COMPOSE_PROJECT_NAME}.default
+    name: ${COMPOSE_PROJECT_NAME}-default
