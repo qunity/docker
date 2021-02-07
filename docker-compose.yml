@@ -24,19 +24,20 @@ services:
       context: ./docker/image/nginx
       args:
         - PROJECT_USER=${PROJECT_USER}
+    user: ${PROJECT_USER}
     networks:
       - default
     ports:
       - ${PROJECT_PORT}:80
     env_file:
       - ./.env
-    environment:
-      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
     working_dir: /usr/share/nginx/html
     volumes:
       - ./project:/usr/share/nginx/html
       - ./docker/socket:/var/socket
-      - ./docker/image/nginx/etc:/etc/nginx/templates:ro
+      - ./docker/image/nginx/etc/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/image/nginx/etc/server.conf:/etc/nginx/templates/server.conf.template:ro
+      - ./docker/image/nginx/etc/fastcgi.conf:/etc/nginx/templates/fastcgi.conf.template:ro
 
   # +--------------------------------------------------------------------------+
   # | PHP                                                                      |
@@ -59,8 +60,8 @@ services:
       - ./project:/usr/share/nginx/html
       - ./docker/socket:/var/socket
       - ./docker/image/php/etc/php.conf:/usr/local/etc/php/conf.d/php.ini:ro
-      - ./docker/image/php/etc/opcache.conf:/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini:ro
       - ./docker/image/php/etc/php-fpm.conf:/usr/local/etc/php-fpm.d/${PROJECT_HOST}.conf:ro
+      - ./docker/image/php/etc/opcache.conf:/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini:ro
       - ./docker/image/php/etc/xdebug.conf:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:ro
 
 networks:

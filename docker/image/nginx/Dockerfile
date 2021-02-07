@@ -13,7 +13,8 @@ FROM nginx:1.19-alpine
 
 ARG PROJECT_USER
 
-RUN addgroup -g "1000" -S "${PROJECT_USER}" && \
-    adduser -u "1000" -S -D "${PROJECT_USER}" -G "${PROJECT_USER}"
+RUN addgroup -g 1000 -S ${PROJECT_USER} && \
+    adduser -u 1000 -S -D ${PROJECT_USER} -G ${PROJECT_USER}
 
-RUN rm -f "/docker-entrypoint.d/10-listen-on-ipv6-by-default.sh"
+RUN rm -f /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh && \
+    chown -R ${PROJECT_USER}:${PROJECT_USER} /etc/nginx

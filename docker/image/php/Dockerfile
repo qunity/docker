@@ -13,14 +13,14 @@ FROM php:8.0-fpm-alpine
 
 ARG PROJECT_USER
 
-RUN addgroup -g "1000" -S "${PROJECT_USER}" && \
-    adduser -u "1000" -S -D "${PROJECT_USER}" -G "${PROJECT_USER}"
+RUN addgroup -g 1000 -S ${PROJECT_USER} && \
+    adduser -u 1000 -S -D ${PROJECT_USER} -G ${PROJECT_USER}
 
-RUN apk update
+RUN curl -sS https://getcomposer.org/installer | \
+    php -- --install-dir /usr/local/bin --filename composer --prefer-dist
 
-RUN curl -sS "https://getcomposer.org/installer" | \
-    php -- --install-dir "/usr/local/bin" --filename "composer" --prefer-dist
+RUN apk update && apk add --no-cache ${PHPIZE_DEPS} && \
+    pecl install xdebug && docker-php-ext-enable xdebug && \
+    docker-php-ext-install opcache && docker-php-ext-enable opcache
 
-RUN apk add --no-cache ${PHPIZE_DEPS} && \
-    pecl install "xdebug" && docker-php-ext-enable "xdebug" && \
-    docker-php-ext-install "opcache" && docker-php-ext-enable "opcache"
+RUN sed -i -e "s/^ *user *=/;user =/g" -e "s/^ *group *=/;group =/g" /usr/local/etc/php-fpm.d/www.conf
