@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# +----------------------------------------------------------------------------+
+# |                                                                            |
+# | This file is part of the Qunity package.                                   |
+# |                                                                            |
+# | Copyright (c) Rodion Kachkin <kyleRQWS@gmail.com>                          |
+# |                                                                            |
+# | For the full copyright and license information, please view the LICENSE    |
+# | file that was distributed with this source code.                           |
+# |                                                                            |
+# +----------------------------------------------------------------------------+
+
+# ------------------------------------------------------------------------------
+# Load file
+# [<file>[!] ...]
+# ------------------------------------------------------------------------------
+function Qunity::Load::File() {
+  declare file=""
+  declare -a files=()
+
+  if [[ $# -eq 0 ]]; then
+    while read -r file; do files+=("$file"); done
+    ${FUNCNAME[0]} "${files[@]}"; return
+  fi
+
+  IFS=$'\n'
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      *"!")
+        for file in ${1%%+("!")}; do
+          files+=("$(readlink --canonicalize-missing "$file")")
+        done
+      ;;
+      *)
+        for file in $1; do
+          if [[ ! -f "$file" ]]; then continue; fi
+          files+=("$(readlink --canonicalize-missing "$file")")
+        done
+      ;;
+    esac
+
+    shift
+  done
+  IFS=$' \t\n'
+
+  for file in "${files[@]}"; do
+    # shellcheck source=/dev/null
+    if ! source "$file"; then false; return; fi
+  done
+}
+
+# ------------------------------------------------------------------------------
+# Start
+# ------------------------------------------------------------------------------
+set -o errexit -o errtrace -o pipefail -o nounset
+shopt -s extglob
+
+# shellcheck disable=SC2034
+readonly BASE_DIR="$(readlink --canonicalize "$(dirname "$0")/../")"

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# +----------------------------------------------------------------------------+
+# |                                                                            |
+# | This file is part of the Qunity package.                                   |
+# |                                                                            |
+# | Copyright (c) Rodion Kachkin <kyleRQWS@gmail.com>                          |
+# |                                                                            |
+# | For the full copyright and license information, please view the LICENSE    |
+# | file that was distributed with this source code.                           |
+# |                                                                            |
+# +----------------------------------------------------------------------------+
+
+# shellcheck source=/dev/null
+source "$(readlink --canonicalize "$(dirname "$0")/(init)")"
+Qunity::Load::File "${BASE_DIR}/.env!"
+
+docker-compose --file "${BASE_DIR}/docker-compose.yml" exec --user "${PROJECT_USER}" php ./bin/qunity "$@"
